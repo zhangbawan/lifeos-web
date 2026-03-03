@@ -211,14 +211,17 @@ async function analyzePersonalityWithAI(data, currentPersonality) {
 4. confidence 表示分析置信度，基于记录数量和质量`;
 
   try {
+    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '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';
+    const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'stepfun/step-3.5-flash:free';
+    
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer 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`,
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'stepfun/step-3.5-flash:free',
+        model: OPENROUTER_MODEL,
         messages: [
           { role: 'system', content: systemPrompt },
           {
