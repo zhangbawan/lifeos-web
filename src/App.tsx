@@ -155,23 +155,21 @@ function App() {
   const handleAnalyzeAsync = async (entryId: number) => {
     setAnalyzingId(entryId)
     try {
-      await fetch(`https://marvel-remained-pst-specify.trycloudflare.com/api/analyze/${entryId}/async`, {
+      // 直接调用同步分析接口（更快）
+      const res = await fetch(`https://marvel-remained-pst-specify.trycloudflare.com/api/analyze/${entryId}`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       })
-      const pollInterval = setInterval(async () => {
-        const res = await fetch(`https://marvel-remained-pst-specify.trycloudflare.com/api/analyze/${entryId}/status`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        })
-        const data = await res.json()
-        if (data.status === 'completed') {
-          clearInterval(pollInterval)
-          setAnalyzingId(null)
-          loadData()
-          alert('分析完成！')
-        }
-      }, 2000)
-      setTimeout(() => clearInterval(pollInterval), 60000)
+      const data = await res.json()
+      
+      if (data.success && data.analysis) {
+        setAnalyzingId(null)
+        loadData()
+        // 使用更友好的提示
+        console.log('✅ AI 分析完成')
+      } else {
+        throw new Error(data.error || '分析失败')
+      }
     } catch (error) {
       console.error('Analysis failed:', error)
       setAnalyzingId(null)
