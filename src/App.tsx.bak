@@ -32,9 +32,6 @@ type Personality = {
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'))
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [loginError, setLoginError] = useState('')
   const [currentView, setCurrentView] = useState<'list' | 'timeline' | 'analysis' | 'profile' | 'personality' | 'insights'>('timeline')
   const [showCreate, setShowCreate] = useState(false)
   const [showEdit, setShowEdit] = useState(false)
@@ -124,28 +121,15 @@ function App() {
   }
 
   const handleLogin = async () => {
-    setLoginError('')
-    if (!username || !password) {
-      setLoginError('请输入用户名和密码')
-      return
-    }
-    
-    try {
-      const res = await fetch('https://marvel-remained-pst-specify.trycloudflare.com/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: username, password: password })
-      })
-      const data = await res.json()
-      
-      if (data.token) {
-        localStorage.setItem('token', data.token)
-        setToken(data.token)
-      } else {
-        setLoginError(data.error || '登录失败')
-      }
-    } catch (error) {
-      setLoginError('网络错误，请稍后重试')
+    const res = await fetch('https://marvel-remained-pst-specify.trycloudflare.com/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'test@example.com', password: 'test123' })
+    })
+    const data = await res.json()
+    if (data.token) {
+      localStorage.setItem('token', data.token)
+      setToken(data.token)
     }
   }
 
@@ -199,46 +183,12 @@ function App() {
         <div className="w-full max-w-md p-8 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10">
           <div className="flex flex-col items-center mb-8">
             <Brain className="w-16 h-16 text-purple-400 mb-4" />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">LifeOS</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">LifeOS Enhanced v2</h1>
             <p className="text-slate-400 mt-1">AI 驱动的人生记录系统</p>
           </div>
-          
-          {loginError && (
-            <div className="mb-4 p-3 rounded-lg bg-red-500/20 border border-red-500/30 text-red-300 text-sm">
-              {loginError}
-            </div>
-          )}
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-slate-400 mb-2">用户名</label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
-                placeholder="请输入用户名"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm text-slate-400 mb-2">密码</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
-                placeholder="请输入密码"
-              />
-            </div>
-            
-            <button
-              onClick={handleLogin}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-medium hover:opacity-90 transition-opacity"
-            >
-              登录
-            </button>
-          </div>
+          <button onClick={handleLogin} className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-medium">
+            登录
+          </button>
         </div>
       </div>
     )
